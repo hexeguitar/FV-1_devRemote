@@ -35,7 +35,9 @@ Once connected to the Wifi, simply open the browser and navigate to
 
 ![Web interface](pics/fv1remote7.png)  
 * Use **Choose files** + **Upload** button to upload the hex files.  
-* Click on the grenn :green_square:**Enable** to parse the file and make it available for the FV-1.
+* Click on the green :green_square:**Enable** to parse the file and make it available for the FV-1.
+* Click on the red :red_square:**Delete** to, as expected, delete the file.
+* Click on the file name to download it.
 * Click on the buttons 0-7 to trigger the FV-1 to load a patch from the currently enabled hex file.
 * **EEPROM burn** button will write the content of the currently enabled hex file into the onboard EEPROM.  
 * **EEPROM enable** button can be used to test the onboard EEPROM. It disables the file access and 8 patch buttons.  
