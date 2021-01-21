@@ -1,0 +1,193 @@
+
+<!DOCTYPE HTML> <!-- For more information visit: https://fipsok.de -->
+<html lang="en">
+  <head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="/htm/style.css">
+	<title>FV-1 DSP DevRemote</title>
+	<script>
+        window.addEventListener('DOMContentLoaded', () => {
+	    var name = JSON.parse(localStorage.getItem('button'));
+		if (!name) {
+          fetch('/press', {
+          }).then(resp => {
+            return resp.json();
+          }).then(arr => {
+	        localStorage.setItem('button', JSON.stringify(arr));
+			dom(arr);
+	      });
+        }
+		else {
+		  dom(name);
+		}
+      });
+      window.addEventListener('DOMContentLoaded', fwname);
+      window.addEventListener('DOMContentLoaded', getip);
+	  document.addEventListener('DOMContentLoaded', () => {
+		list(JSON.parse(localStorage.getItem('sortBy')));
+      });
+    function fwname() {
+    fetch('/enable', {
+            }).then(resp => {
+                return resp.json();
+            }).then(arr => {
+                localStorage.setItem('currfw', JSON.stringify(arr));  
+                showname(arr);      
+            });   
+    }
+    function getip() {
+    fetch('/getip', {
+            }).then(resp => {
+                return resp.json();
+            }).then(arr => {
+                buf = 'Device IP: ';
+                buf += arr;
+                document.querySelector('#showip').insertAdjacentHTML('afterbegin', buf); 
+            });   
+    }
+    function showname(name)
+    {
+        var buf = '<table><tr><td>Enabled file: </td>';
+            buf += '<td>' + name + '</td></tr>';
+            buf += '<tr><td><button id="burn" disabled>EEPROM burn</button></td><td class="left"><button id="eepen">EEPROM enable </button></td></tr></table>';
+            document.querySelector('#enfile').insertAdjacentHTML('afterbegin', buf);
+            if (name != "Not a valid FV-1 hex file!" && name !="File not found!" && name !="Error!") burn.removeAttribute('disabled');    
+            else burn.setAttribute('disabled', 'disabled');
+            document.querySelector('#burn').addEventListener('click', () => {
+                console.log("Burn EEprom!")
+                fetch('/burn', {
+                    }).then(resp => {
+                        return resp.json();
+                    }).then(arr => {
+                        alert(arr);
+                    });  
+            });
+            document.querySelector('#eepen').addEventListener('click', () => {
+                console.log("Test EEprom!")
+                fetch('/eepen', {
+                    }).then(resp => {
+                        return resp.json();
+                    }).then(arr => {
+                        if (arr != "EEPROM enable: ON")
+                        {
+                            eepen.style.backgroundColor = '#eee'
+                            eepen.style.color = '#000';
+                            document.querySelectorAll('.button_row').forEach((el, i) => {
+                                el.removeAttribute('disabled');
+                            });
+                            document.querySelector('#eepen').innerHTML = "EEPROM enable&nbsp";
+                        }
+                        else
+                        {
+                            document.querySelector('#eepen').innerHTML = "EEPROM enabled";
+                            eepen.style.backgroundColor = '#265826'
+                            eepen.style.color = '#eee';
+                            document.querySelectorAll('.button_row').forEach((el, i) => {
+                                el.setAttribute('disabled', 'disabled');
+		                    });                           
+                        }
+                    });  
+            });
+    }
+      function dom(names) {
+	  	var buf = '<div class="row">';
+	    names.forEach(el => {
+		  length = Math.max(length, el.length);
+		  buf += '<button class="button button_row">' + el + '</button>';
+        });
+        buf +='</div>';
+	    document.querySelector('#btns').insertAdjacentHTML('afterbegin', buf);
+		send(names);
+        document.querySelectorAll('.button_row').forEach((el, i) => {
+          el.addEventListener('click', () => {
+            let formData = new FormData();
+            formData.append(i, 0);
+            send(names,formData);
+          });
+        });
+	  }
+      function send(arr, arg) {
+        fetch('/press', {
+          method: 'post',
+          body: arg
+        }).then(resp => {
+          return resp.json();
+        }).then(str => {
+		  if (str.length != arr.length) localStorage.clear();
+          document.querySelectorAll('.button_row').forEach((el, i) => {
+		    el.style.minWidth = 0.8 * length + 'em';
+		    el.style.backgroundColor = str[i] != 0 ? '#eee' : '#97c7d6';
+		  });
+        });
+      }       
+	  function list(to){
+		let myList = document.querySelector('main'), noted = '';
+		fetch(`?sortHex=${to}`).then( (response) => {
+          return response.json();
+        }).then((json) => {
+		  myList.innerHTML = '<nav><input type="radio" id="/" name="group" checked="checked"><label for="/"> &#128193;</label><span id="cr">+&#128193;</span></nav><span id="si"></span>';
+          document.querySelector('form').setAttribute('action', '/uploadhex?f=');
+          let dir = '<table>';
+          for (var i = 0; i < json.length - 1; i++) {
+            let f = json[i].folder, n = json[i].name;
+		    if (f != noted) {
+              noted = f;
+              dir += `<tr><td colspan="4"><nav><input type="radio" id="${f}" name="group"><label for="${f}"></label> &#128193; ${f} <a href="?delete=/${f}">&#x1f5d1;&#xfe0f;</a></nav></td></tr>`;
+			}
+                if (n != '') dir += `<tr><td><a href="${f}/${n}">${n}</a></td><td><small>${json[i].size}</small></td><td><a  class="grn" href="/enable?file=${f}/${n}"> Enable</a></td><td><a  class="red" href="?delete=${f}/${n}"> Delete</a></td></tr>`;
+          }
+          dir += `<tr><td colspan="4"><b id="so">${to ? '&#9660;' : '&#9650;'} FileSystem</b> used ${json[i].usedBytes.replace(".00", "")} of ${json[i].totalBytes.replace(".00", "")}</td></tr>`;
+          dir += '</table>';
+          myList.insertAdjacentHTML('beforeend', dir);
+          var free = json[i].freeBytes;
+		  cr.addEventListener('click', () => {
+			document.getElementById('no').classList.toggle('no');
+		  });
+		  so.addEventListener('click', () => {
+			list(to=++to%2);
+			localStorage.setItem('sortBy', JSON.stringify(to));
+		  });
+		  document.addEventListener('change', (e) => {
+		    if (e.target.id == 'fs') {
+		  	  for (var bytes = 0, i = 0; i < event.target.files.length; i++) bytes += event.target.files[i].size;
+              for (var output = `${bytes} Byte`, i = 0, circa = bytes / 1024; circa > 1; circa /= 1024) output = circa.toFixed(2) + [' KB', ' MB', ' GB'][i++];
+              if (bytes > free) {
+                si.innerHTML = `<li><b>${output}</b><strong> Not enough disk space!</strong></li>`;
+                up.setAttribute('disabled', 'disabled');
+              } 
+              else {
+			    si.innerHTML = `<li><b>Size:</b> ${output}</li>`;
+                up.removeAttribute('disabled');
+              }
+			}
+            document.querySelectorAll(`input[type=radio]`).forEach(el => { if (el.checked) document.querySelector('form').setAttribute('action', '/uploadhex?f=' + el.id)});
+          });
+		  document.querySelectorAll('[href^="?delete=/"]', '[href^="?burn=/"]').forEach(node => {
+            node.addEventListener('click', () => {
+	          if (!confirm('Are you sure?')) event.preventDefault();
+			});
+		  });
+	    });
+      }
+	</script>
+  </head>
+  <body>
+    <h2>FV-1 DevRemote</h2>
+    <div id="enfile" class="row"></div>
+    <div id="btns"></div>
+        <form method="post" enctype="multipart/form-data">
+        <input id="fs" type="file" name="up[]" multiple>
+        <button id="up" disabled>Upload</button>
+        </form>
+	<form id="no" class="no" method="POST">
+	  <input name="new" placeholder="Folder Name" pattern="[^\x22/%&\\:;]{1,31}" title="Symbols &#8220; % & / : ; \  are not allowed!." required="">
+      <button>Create</button>
+	</form>
+    <main></main>
+    <div class="footer"> 
+        <p>(c) 2021 by Piotr Zapart <a href="https://www.hexefx.com" target="_blank">www.hexefx.com</a> | <span id="showip"></span></p>
+        <p id="showip"></p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,203 @@
+
+body {
+	font-family: sans-serif;
+	background-color: #97c7d6;
+	display: flex;
+	flex-flow: column;
+	align-items: center;
+}
+h1,h2 {
+	color: #f3f3f3;
+	text-shadow: 2px 2px 2px black;
+}
+table {
+    border-collapse: collapse;
+    background-color: #b4e6fb;
+    box-shadow: 5px 5px 5px rgba(0,0,0,0.7);
+}
+
+tr:nth-child(even) {
+    background-color: #9bdcf7;
+}
+td {
+    padding: 5px 5px;
+}
+td a, td b {
+	font-weight: bold;
+	color: black;
+	text-decoration:none;
+	cursor:pointer;
+}
+
+li {
+	background-color: #9bdcf7;
+	list-style-type: none;
+	margin-bottom: 10px;
+	padding: 2px 5px 1px 0;
+	box-shadow: 5px 5px 5px rgba(0,0,0,0.7);
+}
+li a:first-child, li b {
+	font-weight: bold;
+	text-decoration:none;
+	padding: 2px 5px;
+	cursor:pointer;
+}
+li strong {
+	color: red;
+}
+input {
+	height:35px;
+	font-size:14px;
+    padding-left: .3em;
+}
+.folder_bar {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;   
+}
+
+label + a {
+	text-decoration: none;
+}
+h1 + main {
+	display: flex;
+}  
+aside {
+	display: flex;
+	flex-direction: column;
+	padding: 0.2em;
+}
+button {
+	height:40px;
+	width:40px;
+	font-size:16px;
+	box-shadow: 5px 5px 5px rgba(0,0,0,0.7);
+}
+button:active {
+    transition: all .5s ease;
+    transform: translate(2%, 15%);
+    box-shadow: none;
+}
+
+.row {
+    flex-flow: row;
+}
+.button_row {
+    transition: all .5s ease;
+    margin-left: 0.3em;
+    margin-right: 0.3em;
+    margin-top: 1.5em;
+    margin-bottom: 1.5em;
+}
+
+nav {
+	display: flex;
+	align-items: baseline;
+    justify-content: space-between;
+    margin-top: 1.0em;
+    margin-bottom: 0.3em;
+}
+.left {
+    text-align: right;
+}
+#cr {
+	font-weight: bold;
+	cursor:pointer;
+	font-size: 1.5em;
+}
+#up, #burn {
+    width: auto;  
+}
+#eepen{
+    width: 148px;
+}
+#burn, #eepen {
+    box-shadow: none;
+    height:30px;
+}
+.note {
+	background-color: #fecdee;
+	padding: 0.5em;
+	margin-top: 1em;
+	text-align: center;
+	max-width: 320px;
+	border-radius: 0.5em;
+}
+.no {
+	display: none;
+}
+form [title] {
+	background-color: #97c7d6;
+	font-size: 16px;
+	width: 125px;
+}
+form:nth-of-type(2) {
+	margin-bottom: 1em;
+}
+[value*=Format] {
+	margin-top: 1em;
+	box-shadow: 5px 5px 5px rgba(0,0,0,0.7);
+}
+[name="group"] {
+	display: none;
+}
+[name="group"] + label {
+	font-size: 1.5em;
+	margin-right: 5px;
+}
+[name="group"] + label::before {
+	content: "\002610";
+}	
+[name="group"]:checked + label::before {
+	content: '\002611\0027A5';
+}
+
+.footer {
+    font-size:12px;
+    margin-block: 0.3em;
+    margin-top: 0.1em;
+    margin-bottom: 0.05em;
+}
+
+.grn {
+    color: #265826;
+} 
+.red {
+    color: darkred;
+}
+
+/* Tooltip container */
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+  }
+  
+  /* Tooltip text */
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+   
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+  }
+  
+  /* Show the tooltip text when you mouse over the tooltip container */
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+  }
+  .tooltip .tooltiptext::after {
+    content: " ";
+    position: absolute;
+    bottom: 100%;  /* At the top of the tooltip */
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent black transparent;
+  }
