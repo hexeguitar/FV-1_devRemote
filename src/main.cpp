@@ -42,7 +42,7 @@ void setup()
     delay(100);
     server_init();
     fw_enabled = fv1.begin();
-    Serial.print("Boot: load lasts used file: ");
+    Serial.print("Boot: load last used file: ");
     Serial.println(fw_enabled);
 }
 
