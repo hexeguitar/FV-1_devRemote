@@ -11,7 +11,7 @@ Instead of reprogramming the EEPROM memory every time a change in the code is ma
 7. Creates a WiFi access point **FV1remote**.  
 
 ### Basic connections
-Four signals are requires to use all the features:  
+Four signals + GND are requires to use all the features:  
 Programmer | Target FV-1 device
 -----------|-------------------
 D5/GPIO14/RESET|FV1 T0 pin + 10k pullup resistor

@@ -1,0 +1,38 @@
+#######################################
+# Syntax Coloring Map
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+ExternalEEPROM	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin	KEYWORD2
+isConnected	KEYWORD2
+isBusy	KEYWORD2
+read	KEYWORD2
+write	KEYWORD2
+erase	KEYWORD2
+setMemorySize	KEYWORD2
+getMemorySize	KEYWORD2
+length	KEYWORD2
+setPageSize	KEYWORD2
+getPageSize	KEYWORD2
+setPageWriteTime	KEYWORD2
+getPageWriteTime	KEYWORD2
+enablePollForWriteComplete	KEYWORD2
+disablePollForWriteComplete	KEYWORD2
+get	KEYWORD2
+put	KEYWORD2
+setI2CBufferSize	KEYWORD2
+getI2CBufferSize	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
