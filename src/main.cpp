@@ -21,7 +21,7 @@
  * - Perttu Haimi https://github.com/n3ws/fvduino - for the fv-1 optimized i2c slave implementation
  */
 #include <Arduino.h>
-#include "server.h"
+#include "fv1_server.h"
 #include "fv1.h"
 
 const uint8_t fv1_reset_pin = 14;
