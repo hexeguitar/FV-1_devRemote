@@ -56,6 +56,7 @@ private:
     uint8_t get_record_chksum(uint8_t* record);
     bool parse_record(uint8_t* record);
     bool eep_verify(void);
+    void print_file(void);
 };
 
 extern FV1 fv1;

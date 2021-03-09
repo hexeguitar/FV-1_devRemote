@@ -18,9 +18,10 @@
 #include "Wire.h"
 #include "SparkFun_External_EEPROM.h"
 
-#define FV1_HEXFILE_SIZE (21517u) // length of the SpinASM output hex file
+#define FV1_HEXFILE_SIZE_WIN            (21517u) // length of the SpinASM output hex file
+#define FV1_HEXFILE_SIZE_UNIX           (20492u)   
 #define IHEX_START ':'
-#define I2C_SLAVE_TIMEOUT_TICKS 0x4000
+#define I2C_SLAVE_TIMEOUT_TICKS 0x8000
 
 bool IRAM_ATTR trig_read(uint8_t *dataPtr, uint8_t rst);
 
@@ -109,16 +110,54 @@ FV1_result_t FV1::load_file(const String &path)
 
     File hexfile = LittleFS.open(path, "r"); // read mode
 
-    if (hexfile.size() != FV1_HEXFILE_SIZE)
+    if (hexfile.size() == FV1_HEXFILE_SIZE_WIN || hexfile.size() == FV1_HEXFILE_SIZE_UNIX)
+    {
+        // file legth ok
+    }
+    else
     {
         hexfile.close();
         boot_complete = 1;
         return FV1_INPUT_FILE_WRONG;
     }
-
+    // Now let's handle the mess with OS dependant line endings
+    // line end:    Windows:        CRLF \r\n
+    //              Linux           LF     \n
+    //              Mac (preOSX)    CR   \r  
+    hexfile.setTimeout(10);
+    char term = '\r';
+    bool t_found = hexfile.findUntil("\r", &term);
+    if (t_found)
+    {
+        hexfile.seek(0);
+        term = '\n';
+        t_found = hexfile.findUntil("\n", &term);
+        if (t_found)
+        {
+           Serial.println(PSTR("Win type file ending detected"));
+        }
+        else
+        {
+            term = '\r';
+            Serial.println(PSTR("Mac (old) type line ending detected"));
+        }  
+    }
+    else
+    {
+        hexfile.seek(0);
+        term = '\n';
+        t_found = hexfile.findUntil("\n", &term);
+        if (t_found)
+        {
+            Serial.println(PSTR("Unix type file ending detected"));
+        }    
+    }
+    hexfile.setTimeout(1000);
+    hexfile.seek(0);
     while (hexfile.available())
     {
         String data = hexfile.readStringUntil('\n'); // get a new line
+        data.trim();
         if (data[0] != IHEX_START)
         {
             hexfile.close();
@@ -126,14 +165,13 @@ FV1_result_t FV1::load_file(const String &path)
             return FV1_INPUT_FILE_WRONG;
         }
         // each line is one FV1 instruction,
-        data.getBytes(buffer, data.length()); // convert to byte array
-
+        data.getBytes(buffer, data.length()+1); // convert to byte array
         type = get_record_type(buffer);
         byte_count = get_record_length(buffer);
         chksum = get_record_chksum(buffer);
         data_addr = get_record_address(buffer);
         sum = byte_count + (data_addr >> 8) + (data_addr & 0xFF) + chksum + type;
-
+        //Serial.printf("addr = %04d, cnt = %04d\r\n", data_addr, byte_count);
         switch (type)
         {
         case 0x00: // data byte
@@ -428,4 +466,20 @@ bool FV1::eep_verify(void)
     Serial.println(F("\r\nVerification PASSED!"));
     free(onEEPROM);
     return (true);
+}
+
+void FV1::print_file(void)
+{
+    uint16_t i = 0;
+    while(i < 4096)
+    {
+        Serial.printf("%04d:\t%02x:%02x:%02x:%02x\t%04d:\t%02x:%02x:%02x:%02x\r\n", 
+                    i/4,
+                    dsp_fw_bf[i],  dsp_fw_bf[i + 1],
+                    dsp_fw_bf[i + 2],  dsp_fw_bf[i + 3],
+                    (i+4)/4,
+                    dsp_fw_bf[i+4],  dsp_fw_bf[i + 5],
+                    dsp_fw_bf[i + 6],  dsp_fw_bf[i + 7]);
+        i = i + 8;
+    }
 }
