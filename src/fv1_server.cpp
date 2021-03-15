@@ -28,6 +28,8 @@ uint8_t btn_pressed;
 String fw_enabled = "";
 String fw_enabled_last = "";
 
+bool refresh_request = false;
+
 const char WARNING[] PROGMEM = R"(<h2>No File System found!</h2>)";
 const char HELPER[] PROGMEM = R"(<h2>Please upload index.html to the /htm folder</h2>)";
 
@@ -119,6 +121,20 @@ void server_init(void)
         temp += (String) "\"" + WiFi.softAPIP().toString().c_str() + "\"";
         temp += "]";
         server.send(200, "application/json", temp);
+    });
+    // used to reload the site
+    server.on("/refresh", HTTP_GET, []() {
+        String reply = refresh_request ? "1" : "0";
+        String temp = "[";
+        temp +=  refresh_request ;
+        temp += "]";
+        server.send(200, "application/json", temp);
+        refresh_request = false;
+    });
+
+    server.on("/trigrefresh", HTTP_GET, []() {
+        refresh_request = true;
+        sendResponse();
     });
 
     server.begin();

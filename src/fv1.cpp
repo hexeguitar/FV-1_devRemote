@@ -120,7 +120,7 @@ FV1_result_t FV1::load_file(const String &path)
         boot_complete = 1;
         return FV1_INPUT_FILE_WRONG;
     }
-    // Now let's handle the mess with OS dependant line endings
+    // Now let's handle the OS dependant line endings
     // line end:    Windows:        CRLF \r\n
     //              Linux           LF     \n
     //              Mac (preOSX)    CR   \r  

@@ -72,7 +72,54 @@ Depending on the operating system the `platformio.ini` file will require a few a
 4. Build and upload the firmware.  
 
 ### Debug
-For more debug/verbose information connect the board connect the usb and monitor the serial port.
+For more debug/verbose information connect the board connect the usb and monitor the serial port.  
+
+### Automatic file upload  
+The next step in automating the process is to watch the directory where the output hex files are generated and trigger an automatic upload/enable if a new file appears or an existing file is modified.  
+To achieve that a small python script watcher.py is provided in the **scripts** folder.  
+```
+❯ ./watcher.py --help
+usage: watcher.py [-h] [-u URL] [-d DIR] [-v]
+
+FV1 DevRemote auto file uploader. (c) 2021 by Piotr Zapart www.hexefx.com
+
+optional arguments:
+  -h, --help         show this help message and exit
+  -u URL, --url URL  FV1 DevRemote base url
+  -d DIR, --dir DIR  Directory to watch
+  -v, --verbose      Verbose mode
+```
+#### Installation on Linux
+1. Install pacakges required by pycurl  
+    ```sudo apt install libcurl4-gnutls-dev librtmp-dev```
+2. Install python packages:  
+    ```python3 -m pip install --user watchdog pycurl```  
+#### Installation on Windows  
+There is a compiled (using pyinstaller) exe file provided in the scripts folder. Tested on Windows 10.  
+Python version installation:  
+1. Check which version of python you have installed
+2. Go to https://dl.bintray.com/pycurl/pycurl/
+    and download compatible pycurl installer, ie.
+    for python 3.8 the latest version at the moment is
+    pycurl-7.43.0.5.win-amd64-py3.8.exe
+3. Install pycurl
+4. Install watchdog:
+    pip3 install watchdog  
+#### Usage  
+Simplest way to use the uploader is to copy the `watcher.py` or `watcher.exe` file to the directory where the SpinAsm/SpinCAD files will be generated and executing it in that directory.  
+***On Windows***, open the command line and navigate to the hex output directory where the watcher.exe file exists and run it with the following command:  
+`watcher.exe --url 192.168.4.1`  
+The default url for the FV1 DevRemote board uses mDNS and is `fv1.local`. On Windows however, i experienced problems with resolving the mDNS local addresses using python's pycurl library. Therefore i opted to use the boards IP address, which normally defaults to 192.168.4.1. If you redefined the IP address in your build - use the correct address here.  
+If there are still problems, enable the verbose mode to see more detailed info:  
+`watcher.exe --url 192.168.4.1 --verbose`  
+Another way of more global use would be to add the path to the watcher.exe file to the system enviromental PATH, this way it will be executable from any other directory.  
+Having done that, there is no need to copy the watcher.exe file to each scanned hex file folder. Simply execute `watcher.exe` from the command line in that folder.  
+***On Linux***, well it's much simpler :)  
+Most distributions will automatically add the files placed in the `~/bin/` directory to the PATH. Copy the `watcher.py` file to the ~/bin/, update the PATH `source ~/.profile`, go to the FV1 hex output directory and start the watcher:  
+`watcher.py`  
+Without any parameters the script will assume the board's url is http://fv1.local. and the watched directory is the one where the script is invoked from.  
+Once the file is uploaded and enabled the page should automatically refresh within 1 second.  
+Press Ctrl+C to exit the watcher.
 
 ### Credits  
 The idea for this project sparked in this thread over at diystopmboxes forum:  
