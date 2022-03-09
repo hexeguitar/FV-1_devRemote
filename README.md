@@ -2,7 +2,7 @@
 ### WiFi enabled EEPROM emulator for the SpinSemi FV-1 DSP  
 based on inexpensive ESP8266 module and designed to significantly speed up the development process for the Spin Semi FV-1 DSPs. 
 Instead of reprogramming the EEPROM memory every time a change in the code is made this device does the following:  
-1. Emulates the 24LC32A EEPROM using optimized I2S slave interface.
+1. Emulates the 24LC32A EEPROM using optimized I2C slave interface.
 2. Depending of the FLASH size used in the ESP module, provice a few MB space for compiles SpinAsm hex files. 
 3. Provides a web interface for uploading the hex files and selecting one of the 8 programs.
 4. For even quicker upload creates an FTP server.
