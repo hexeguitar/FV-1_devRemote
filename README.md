@@ -3,7 +3,7 @@
 based on inexpensive ESP8266 module and designed to significantly speed up the development process for the Spin Semi FV-1 DSPs. 
 Instead of reprogramming the EEPROM memory every time a change in the code is made this device does the following:  
 1. Emulates the 24LC32A EEPROM using optimized I2C slave interface.
-2. Depending of the FLASH size used in the ESP module, provice a few MB space for compiles SpinAsm hex files. 
+2. Depending of the FLASH size used in the ESP module, provides a few MB space for compiles SpinAsm hex files. 
 3. Provides a web interface for uploading the hex files and selecting one of the 8 programs.
 4. For even quicker upload creates an FTP server.
 5. Acts as an EEPROM programmer, can write the tested hex file to EEPROM.
